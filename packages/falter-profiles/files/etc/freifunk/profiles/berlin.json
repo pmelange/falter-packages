@@ -1,0 +1,18 @@
+{ 
+  "community": { 
+    "name": "Freifunk Berlin",
+    "homepage": "http://berlin.freifunk.net",
+    "latitude": 52.52075,
+    "longitude": 13.40948,
+    "owm_api": "http://util.berlin.freifunk.net",
+    "ssid": "berlin.freifunk.net"
+  },
+  "mesh_80211s": {
+    "2g": {
+      "mesh_id": "Mesh-Freifunk-Berlin"
+    },
+    "5g": {
+      "mesh_id": "Mesh-Freifunk-Berlin"
+    }
+  }
+}

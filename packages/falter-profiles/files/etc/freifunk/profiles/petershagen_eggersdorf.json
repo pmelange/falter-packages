@@ -1,0 +1,18 @@
+{ 
+  "community": { 
+    "name": "Freifunk Petershagen-Eggersdorf",
+    "homepage": "http://freifunk.hacrafu.de",
+    "latitude": 52.536111,
+    "longitude": 13.805556,
+    "owm_api": "http://util.berlin.freifunk.net",
+    "ssid": "freifunk.hacrafu.de"
+  },
+  "mesh_80211s": {
+    "2g": {
+      "mesh_id": "Mesh-Freifunk-Berlin"
+    },
+    "5g": {
+      "mesh_id": "Mesh-Freifunk-Berlin"
+    }
+  }
+}

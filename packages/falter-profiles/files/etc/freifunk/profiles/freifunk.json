@@ -1,0 +1,237 @@
+{
+  "community": {
+    "name": "Freifunk",
+    "homepage": "http://freifunk.net",
+    "latitude": 52.000,
+    "longitude": 10.000,
+    "ssid": "freifunk.net"
+  },
+  "dhcp": {
+    "@dnsmasq[0]": {
+      "server": [
+        "194.150.168.168",
+        "9.9.9.10",
+        "149.112.112.10"
+      ],
+      "quietdhcp": 1,
+      "domain": "ff",
+      "notinterfac": [ "wan" ]
+    },
+    "dhcp": {
+      "start": 2,
+      "force": 1,
+      "leasetime": "5m"
+    }
+  },
+  "system": {
+    "@system[0]": {
+      "zonename": "Europe/Berlin",
+      "timezone": "CET-1CEST,M3.5.0,M10.5.0/3"
+    },
+    "ntp": {
+      "use_dhcp": 0
+    }
+  },
+  "wireless": {
+    "wifi_device": {
+      "2g": {
+        "country": "DE",
+        "channel": 13,
+        "diversity": 1,
+        "disabled": 0
+      },
+      "5g": {
+        "country": "DE",
+        "channel": 36,
+        "htmode": "VHT40",
+        "diversity": 1,
+        "disabled": 0
+      }
+    }
+  },
+  "firewall": {
+    "defaults": {
+      "synflood_protect": 1,
+      "input": "ACCEPT",
+      "forward": "REJECT",
+      "output": "ACCEPT",
+      "drop_invaled": 0
+    },
+    "include": {
+      "path": "/etc/firewall.user"
+    },
+    "zone" : {
+      "zone_wan": {
+        "name": "wan",
+        "input": "ACCEPT",
+        "forward": "REJECT",
+        "output": "ACCEPT",
+        "network": [ "wan" ],
+        "masq": 1,
+        "local_restrict": 1
+      },
+      "zone_freifunk": {
+        "name": "freifunk",
+        "input": "REJECT",
+        "forward": "ACCEPT",
+        "output": "ACCEPT",
+        "device": [ "tnl_+" ],
+        "network": [ "tunl0", "dhcp" ]
+      },
+      "zone_ffuplink": {
+        "name": "ffuplink",
+        "input": "REJECT",
+        "forward": "ACCEPT",
+        "output": "ACCEPT",
+        "network": [ "ffuplink" ],
+        "masq": 1
+      }
+    },
+    "forwarding": {
+      "wanfffwd": {
+        "dest": "freifunk",
+        "src": "wan"
+      },
+      "ffuplinkfwd": {
+        "dest": "ffuplink",
+        "src": "freifunk"
+      }
+    },
+    "rule": {
+      "wandhcp": {
+        "name": "Wan-Allow-DHCP-Renew",
+        "src": "wan",
+        "dest_port": 68,
+        "proto": "udp",
+        "family": "ipv4",
+        "target": "ACCEPT"
+      },
+      "wanping": {
+        "name": "Wan-Allow-Ping",
+        "src": "wan",
+        "proto": "icmp",
+        "family": "ipv4",
+        "target": "ACCEPT"
+      },
+      "wandhcp6": {
+        "name": "Wan-Allow-DHCPv6",
+        "src": "wan",
+        "src_ip": "fe80::/10",
+        "src_port": 547,
+        "dest_ip": "fe80::/10",
+        "dest_port": 546,
+        "proto": "udp",
+        "family": "ipv6",
+        "target": "ACCEPT"
+      },
+      "wanicmpin": {
+        "name": "Wan-Allow-ICMPv6-Input",
+        "src": "wan",
+        "proto": "icmp",
+        "icmp_type": "echo-request echo-reply destination-unreachable packet-too-big time-exceeded bad-header unknown-header-type router-solicitation neighbour-solicitation router-advertisement neighbour-advertisement",
+        "limit": "1000/sec",
+        "family": "ipv6",
+        "target": "ACCEPT"
+      },
+      "wanicmpfwd": {
+        "name": "Wan-Allow-ICMPv6-Forward",
+        "src": "wan",
+        "dest": "*",
+        "proto": "icmp",
+        "icmp_type": "echo-request echo-reply destination-unreachable packet-too-big time-exceeded bad-header unknown-header-type",
+        "limit": "1000/sec",
+        "family": "ipv6",
+        "target": "ACCEPT"
+      },
+      "fficmp": {
+        "name": "Freifunk-Allow-ICMP",
+        "src": "freifunk",
+        "proto": "icmp",
+        "target": "ACCEPT"
+      },
+      "ffhttp": {
+        "name": "Freifunk-Allow-HTTP-HTTPS",
+        "src": "freifunk",
+        "dest_port": "80 443",
+        "proto": "tcp",
+        "target": "ACCEPT"
+      },
+      "ffolsr": {
+        "name": "Freifunk-Allow-OLSR",
+        "src": "freifunk",
+        "dest_port": 698,
+        "proto": "udp",
+        "target": "ACCEPT"
+      },
+      "ffdns": {
+        "name": "Freifunk-Allow-DNS",
+        "src": "freifunk",
+        "dest_port": 53,
+        "proto": "udp",
+        "target": "ACCEPT"
+      },
+      "ffdhcp": {
+        "name": "Freifunk-Allow-DHCP",
+        "src": "freifunk",
+        "src_port": 68,
+        "dest_port": 67,
+        "proto": "udp",
+        "target": "ACCEPT"
+      },
+      "ffssh": {
+        "name": "Freifunk-Allow-SSH",
+        "src": "freifunk",
+        "dest_port": 22,
+        "proto": "tcp",
+        "target": "ACCEPT"
+      }
+    }
+  },
+  "mesh_adhoc": {
+    "2g": {
+      "mode": "adhoc",
+      "encryption": "none",
+      "mcast_rate": 6000
+    }, 
+    "5g": {
+      "mode": "adhoc",
+      "encryption": "none",
+      "mcast_rate": 6000
+    },
+    "channel": {
+      "1": {
+        "bssid": "12:CA:FF:EE:BA:BE",
+        "ssid": "intern-ch1.freifunk.net"
+      },
+      "10": {
+        "bssid": "02:CA:FF:EE:BA:BE",
+        "ssid": "intern-ch10.freifunk.net"
+      },
+      "13": {
+        "bssid": "D2:CA:FF:EE:BA:BE",
+        "ssid": "intern-ch13.freifunk.net"
+      },
+      "36": {
+        "bssid": "02:36:CA:FF:EE:EE",
+        "ssid": "intern-ch36.freifunk.net"
+      }
+    }
+  },
+  "mesh_80211s": {
+    "2g": {
+      "mode": "mesh",
+      "encryption": "none",
+      "mesh_id": "Mesh-Freifunk",
+      "mesh_fwding": 0,
+      "mcast_rate": 12000
+    },
+    "5g": {
+      "mode": "mesh",
+      "encryption": "none",
+      "mesh_id": "Mesh-Freifunk",
+      "mesh_fwding": 0,
+      "mcast_rate": 12000
+    },
+    "channel": [ ]
+  }
+}
