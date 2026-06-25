@@ -15,7 +15,7 @@
       ],
       "quietdhcp": 1,
       "domain": "ff",
-      "notinterfac": [ "wan" ]
+      "notinterface": [ "wan" ]
     },
     "dhcp": {
       "start": 2,
@@ -46,6 +46,22 @@
         "htmode": "VHT40",
         "diversity": 1,
         "disabled": 0
+      }
+    }
+  },
+  "tunneldigger": {
+    "broker": {
+      "ffuplink": {
+        "srv": "_tunnel._udp.berlin.freifunk.net",
+        "interface": "ffuplink",
+        "broker_selection": "usage",
+        "bind_interface": "wan"
+      },
+      "bbbdigger": {
+        "srv": "_bbb-vpn._udp.berlin.freifunk.net",
+        "interface": "bbbdigger",
+        "broker_selection": "usage",
+        "bind_interface": "wan"
       }
     }
   },
