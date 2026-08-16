@@ -4,10 +4,6 @@ if (!x) {
 	counter("node_dhcpleases_leases")(null, 0);
 }
 else {
-	let count = 0;
-	let lines = split(x.data, "\n");
-	for (let line in lines) {
-		count++;
-	}
+	let count = length(split(x.data, "\n"));
 	counter("node_dhcpleases_leases")(null, count-1);
 }
