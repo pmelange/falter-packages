@@ -1,12 +1,13 @@
-let f = fs.open("/tmp/dhcp.leases");
+const x = ubus.call("file", "read", {path: "/tmp/dhcp.leases",});
 
-if (!f)
-	return false;
-
-let count = 0;
-while (nextline(f)) {
-	count++;
+if (!x) {
+	counter("node_dhcpleases_leases")(null, 0);
 }
-f.close();
-
-counter('node_dhcpleases_leases')(null, count);
+else {
+	let count = 0;
+	let lines = split(x.data, "\n");
+	for (let line in lines) {
+		count++;
+	}
+	counter("node_dhcpleases_leases")(null, count-1);
+}
