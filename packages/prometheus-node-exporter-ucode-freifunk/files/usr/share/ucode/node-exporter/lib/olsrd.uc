@@ -4,17 +4,21 @@ let linkCount = 0;
 let lqSum = 0.0;
 let nlqSum = 0.0;
 
+let lqmetric = gauge("olsrd_link_signal_quality");
+
 for (let link in olsrinfo.links) {
     linkCount++;
     lqSum += link.linkQuality;
     nlqSum += link.neighborLinkQuality;
-    namebase = link.localIP + "-" + link.remoteIP
-    gauge("olsrd_link_signal_quality")({name: namebase + "-lq",}, link.linkQuality);
-    gauge("olsrd_link_signal_quality")({name: namebase + "-rx",}, link.neighborLinkQuality);
+    let namebase = link.localIP + "-" + link.remoteIP;
+    lqmetric({name: namebase + "-lq",}, link.linkQuality);
+    lqmetric({name: namebase + "-rx",}, link.neighborLinkQuality);
 }
 
-gauge("olsrd_link_signal_quality")({name: "average-lq",}, lqSum / linkCount);
-gauge("olsrd_link_signal_quality")({name: "average-rx",}, nlqSum / linkCount);
+lqmetric({name: "average-lq",}, lqSum / linkCount);
+lqmetric({name: "average-rx",}, nlqSum / linkCount);
+
+gauge("olsrd_links")(null, linkCount);
 
 let routeCount = 0;
 let etxSum = 0.0;
