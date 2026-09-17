@@ -6,7 +6,7 @@ HOSTNAME=$(uci get system.@system[0].hostname)
 PUSHHOST=$(uci get prometheus-push.server.host)
 PUSHPORT=$(uci get prometheus-push.server.port)
 PUSHPATH=$(uci get prometheus-push.server.path)
-URL="${PUSHHOSE}:${PUSHPORT}${PUSHPATH}${HOSTNAME}"
+URL="http://${PUSHHOST}:${PUSHPORT}${PUSHPATH}${HOSTNAME}"
 
 echo $URL
 
