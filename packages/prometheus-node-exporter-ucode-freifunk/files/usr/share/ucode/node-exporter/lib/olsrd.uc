@@ -1,4 +1,4 @@
-const olsrinfo = json(poneline("printf '/all' | nc 127.0.0.1 9090 2>/dev/null"));
+const olsrinfo = json(poneline("printf '/links/routes/topology' | nc 127.0.0.1 9090 2>/dev/null"));
 
 let linkCount = 0;
 let lqSum = 0.0;
