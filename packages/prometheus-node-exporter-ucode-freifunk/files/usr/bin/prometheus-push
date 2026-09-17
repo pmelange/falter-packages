@@ -8,8 +8,6 @@ PUSHPORT=$(uci get prometheus-push.server.port)
 PUSHPATH=$(uci get prometheus-push.server.path)
 URL="http://${PUSHHOST}:${PUSHPORT}${PUSHPATH}${HOSTNAME}"
 
-echo $URL
-
 while true; do
     # 1. Execute the ucode node exporter and save to /tmp
     prometheus-node-exporter-ucode | tail -n +4 > "$TMP_FILE"
