@@ -81,6 +81,10 @@ while (true) {
 		else {
 			// this could be a ts_wgN interface
 			let ip = get_ts_wgN_ip(data[1]);
+			if (ip == data[1]) {
+				// sometimes we need to repeat this
+				ip = get_ts_wgN_ip(data[1]);
+			}
 			hostname = resolve_hostname(ip);
 		}
 		if (hostname == thishost) continue;
@@ -134,6 +138,10 @@ while(true) {
 		else {
 			// this could be a ts_wgN interface
 			let ip = get_ts_wgN_ip(data[4]);
+			if (ip == data[4]) {
+				// sometimes we need to repeat this
+				ip = get_ts_wgN_ip(data[4]);
+			}
 			hostname = resolve_hostname(ip);
 		}
 		if (hostname == thishost) continue;
