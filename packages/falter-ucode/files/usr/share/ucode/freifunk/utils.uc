@@ -1,6 +1,7 @@
 'use strict';
 
-import * as fs from "fs";
+import { access, popen, writefile } from "fs";
+import { rand } from "math";
 
 global.cursor = require("uci").cursor();
 
@@ -11,9 +12,9 @@ const SECTION_NAME = "default";
 
 function guard(config) {
 	// create the default config file if it doesn't yet exist
-	let exists = fs.access(CFG_FILE, "f");
+	let exists = access(CFG_FILE, "f");
 	if (!exists) {
-		fs.writefile(CFG_FILE, "");
+		writefile(CFG_FILE, "");
 		global.cursor.set(CFG, SECTION_NAME, SECTION_TYPE);
 	}
 
@@ -44,8 +45,37 @@ function guard_delete(option) {
 	return true;
 }
 
+function first_ip(net) {
+	if (!net || type(net) != "string") return false;
+
+	let parts = split(net, "/");
+	if (length(parts) != 2) return false;
+
+	let addr = iptoarr(parts[0]);
+	if (!addr) return false;
+
+	let cidr = int(parts[1]);
+	if (!cidr || cidr > 32 || cidr < 8) return false;
+
+	if (cidr <= 30) addr[3]++;
+
+	return sprintf("%s/%d", arrtoip(addr), cidr);
+}
+
+function cidr_to_netmask(cidr) {
+	let mask = (cidr == 0) ? 0 : (0xFFFFFFFF << (32 - cidr)) & 0xFFFFFFFF;
+	let result = [];
+
+	push(result, (mask >> 24) & 0xFF);
+	push(result, (mask >> 16) & 0xFF);
+	push(result, (mask >> 8) & 0xFF);
+	push(result, mask & 0xFF);
+
+	return arrtoip(result);
+}
+
 function get_mac_label() {
-	let fd = fs.popen("(. /lib/functions/system.sh; get_mac_label)");
+	let fd = popen("(. /lib/functions/system.sh; get_mac_label)");
 	if (!fd) return false;
 
 	let addr = trim(fd.read('line'));
@@ -63,6 +93,24 @@ function get_mac_label() {
 	if (length(macs) == 0) return false;
 	return sort(macs)[0];
 
+}
+
+function generate_hex_string(len, prefix) {
+	// we assume any prefix is in the form XX:YY:ZZ
+	let result = prefix ? prefix + ":" : "";
+	let start = (length(result)+1)/3;
+	for (let i = start; i < len ; i++) {
+		result = result + sprintf("%02x", rand(hex("ff")+1)) + ":";
+	}
+	return substr(result, 0, -1); //drop the last ":"
+}
+
+function generate_mac(prefix) {
+	let result = generate_hex_string(6, prefix);
+	// ensure the MAC is unicast and locally administered
+	let first_octet = hex(substr(result, 0, 2));
+	first_octet = (first_octet | 0x02) & 0xFE;
+	return sprintf("%02x", first_octet) + substr(result, 2);
 }
 
 function add_section(cfg, section, config) {
@@ -138,12 +186,16 @@ function commit(cfg) {
 }
 
 return {
-	guard:          guard,
-	guard_rename:   guard_rename,
-	guard_delete:   guard_delete,
-	get_mac_label:  get_mac_label,
-	add_section:    add_section,
-	update_section: update_section,
-	delete_section: delete_section,
-	commit:         commit,
+	guard,
+	guard_rename,
+	guard_delete,
+	generate_hex_string,
+	generate_mac,
+	get_mac_label,
+	first_ip,
+	cidr_to_netmask,
+	add_section,
+	update_section,
+	delete_section,
+	commit,
 };
