@@ -5,12 +5,20 @@ const cfg = "network";
 let ffutils = require("freifunk.utils");
 ffutils.guard(cfg);
 
-// set up lan
-const lan_defaults = {
+// set up dhcp
+const dhcp_defaults = {
+	device:         "br-dhcp",
 	ipaddr:         [ "192.168.42.1/24" ],
 };
-ffutils.update_section(cfg, "lan", lan_defaults);
+global.cursor.rename(cfg, "lan", "dhcp");
+ffutils.update_section(cfg, "dhcp", dhcp_defaults);
 
+const dhcp_dev_defaults = {
+	name:           "br-dhcp",
+};
+ffutils.update_section(cfg, {type: "device", name: "br-lan"}, dhcp_dev_defaults);
+
+// set up wan
 const wan_defaults = {
 	device:         "br-wan",
 	proto:          "dhcp",

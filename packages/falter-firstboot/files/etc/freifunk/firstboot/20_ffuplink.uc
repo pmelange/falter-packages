@@ -26,8 +26,7 @@ const ffuplink_iface_defaults = {
 	disabled:       1,
 };
 
-let iface = require("freifunk.interface");
-let mac = iface.generate_mac("fe"); // prefix mac with fe for "ffuplink egress"
+let mac = ffutils.generate_mac("fe"); // prefix mac with fe for "ffuplink egress"
 const ffuplink_dev_defaults = {
 	name:           "ffuplink",
 	macaddr:        mac,

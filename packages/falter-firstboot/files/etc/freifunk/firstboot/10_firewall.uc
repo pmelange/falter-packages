@@ -25,7 +25,7 @@ const zone_freifunk = {
 	input:          "ACCEPT",
 	output:         "ACCEPT",
 	forward:        "ACCEPT",
-	network:        [ "tunl0" ],
+	network:        [ "dhcp", "tunl0" ],
 	device:         [ "tnl_+" ],
 };
 
@@ -43,16 +43,10 @@ const rules_freifunk = [
 	},
 ];
 
-const forwarding_freifunk = [
-	{
-		dest:           "wan",
-		src:            "freifunk",
-	},
-	{
-		dest:           "freifunk",
-		src:            "wan",
-	},
-];
+const forwarding_freifunk = {
+	src:            "wan",
+	dest:           "freifunk",
+};
 
 ffutils.update_section(cfg, "@defaults[0]", defaults);
 ffutils.update_section(cfg, {type: "zone", name: "wan"}, zone_wan);
@@ -61,7 +55,6 @@ ffutils.delete_section(cfg, {type: "forwarding", src: "lan"});
 ffutils.add_section(cfg, {type: "zone", name: "zone_freifunk"}, zone_freifunk);
 for (let i = 0; i < length(rules_freifunk); i++)
 	ffutils.add_section(cfg, {type: "rule"}, rules_freifunk[i]);
-for (let i = 0; i < length(forwarding_freifunk); i++)
-	ffutils.add_section(cfg, {type: "forwarding"}, forwarding_freifunk[i]);
+ffutils.add_section(cfg, {type: "forwarding"}, forwarding_freifunk);
 
 ffutils.commit(cfg);

@@ -25,6 +25,8 @@ const olsrd_plugins = [
 	{
 		library:        "olsrd_dyn_gw",
 		Ping:           [ "9.9.9.10", "194.150.168.168", "149.112.112.10" ],
+		PingCmd:        "ping -c 1 -q -I ffuplink $s",
+		PingInterval:   30,
 		ignore:         0,
 	},
 ];

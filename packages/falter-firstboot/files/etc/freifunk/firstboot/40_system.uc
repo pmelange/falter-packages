@@ -7,6 +7,7 @@ ffutils.guard(cfg);
 
 const system_defaults = {
 	hostname:       "gib-mir-einen-namen",
+	cronloglevel:   10,
 };
 
 const ntp_defaults = {
