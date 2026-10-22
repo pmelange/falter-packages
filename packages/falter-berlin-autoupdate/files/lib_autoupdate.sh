@@ -72,9 +72,9 @@ get_firmware_flavour() {
     # echos the freifunk-berlin firmware flavour like
     # tunneldigger, notunnel, ...
 
-    local flavour="$(uci_get ffberlin-uplink preset current)"
+    local flavour="$(uci_get ffwizard settings ffuplink)"
 
-    if [ "$flavour" = "tunnelberlin_tunneldigger" ]; then
+    if [ "$flavour" = "tunneldigger" ]; then
         echo "tunneldigger"
     elif [ "$flavour" = "notunnel" ]; then
         echo "notunnel"
